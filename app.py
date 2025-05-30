@@ -14,7 +14,7 @@ import os
 import secrets
 
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, render_template
 
 from extensions import db, bcrypt, login_manager, migrate
 
@@ -85,6 +85,28 @@ def create_app():
         """
         from models import User
         return db.session.get(User, int(user_id))
+
+    # Register error handlers
+    @app.errorhandler(404)
+    def not_found_error(error):
+        """Handle 404 errors with custom page."""
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        """Handle 500 errors with custom page."""
+        db.session.rollback()  # Rollback any failed database transactions
+        return render_template('errors/500.html'), 500
+
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        """Handle 403 errors with custom page."""
+        return render_template('errors/403.html'), 403
+
+    @app.errorhandler(400)
+    def bad_request_error(error):
+        """Handle 400 errors with custom page."""
+        return render_template('errors/400.html'), 400
 
     # Register blueprints
     from routes import main

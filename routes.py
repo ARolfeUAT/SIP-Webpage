@@ -76,6 +76,7 @@ def contact():
     """Handle contact form submission and render the contact page.
 
     Processes form data on POST requests, sending an email via SMTP2GO's API.
+    Handles both regular contact forms and error reports.
     Renders the contact page on GET requests.
 
     Returns:
@@ -86,12 +87,33 @@ def contact():
         email = request.form['email']
         message = request.form['message']
 
+        # Check if this is an error report
+        error_type = request.form.get('error_type')
+        error_url = request.form.get('error_url')
+
+        # Customize subject and message based on whether it's an error report
+        if error_type:
+            subject = f'SIP Website Error Report - {error_type} Error'
+            body = f'''Error Report Details:
+Error Type: {error_type}
+Error URL: {error_url}
+Reporter Name: {name}
+Reporter Email: {email}
+
+User Description:
+{message}
+
+This is an automated error report from the SIP Website.'''
+        else:
+            subject = 'SIP Website Contact Form Submitted'
+            body = f'Name: {name}\nEmail: {email}\nMessage: {message}'
+
         payload = {
             'api_key': current_app.config['SMTP2GO_API_KEY'],
             'sender': email,
             'to': ['arolfe90275@uat.edu'],
-            'subject': 'SIP Website Contact Form Submitted',
-            'text_body': f'Name: {name}\nMessage: {message}'
+            'subject': subject,
+            'text_body': body
         }
 
         headers = {'Content-Type': 'application/json'}
@@ -103,7 +125,13 @@ def contact():
                 headers=headers
             )
             response.raise_for_status()
-            flash('Your message has been sent successfully!', 'success')
+
+            if error_type:
+                flash('Thank you for reporting this issue! We will investigate and fix it as soon as possible.',
+                      'success')
+            else:
+                flash('Your message has been sent successfully!', 'success')
+
             return redirect(url_for('main.contact'))
         except requests.RequestException:
             flash('An error occurred while sending your message. Please try again.', 'danger')
