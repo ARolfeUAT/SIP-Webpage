@@ -2,7 +2,6 @@
 Flask>=3.1.1
 
 # Flask Extensions
-Flask-Bootstrap>=3.3.7.1
 Flask-Mail>=0.10.0
 Flask-Sqlalchemy==3.1.1
 Flask-Bcrypt>=1.0.1

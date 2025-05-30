@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from flask import Flask
 
 
-from extensions import db, bcrypt, login_manager, migrate, bootstrap
+from extensions import db, bcrypt, login_manager, migrate
 
 # Load the environment variables
 load_dotenv()
@@ -52,7 +52,6 @@ migrate.init_app(app, db)
 bcrypt.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'main.login'
-bootstrap.init_app(app)
 
 
 @login_manager.user_loader
