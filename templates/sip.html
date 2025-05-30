@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Project Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4">Project Blog</h1>
+        <p class="text-center mb-4">
+            Follow the progress of my Student Innovation Project, including project
+            description, innovation claim, and updates.
+        </p>
+    </div>
+</div>
+{% if current_user.is_authenticated and current_user.role == 'admin' %}
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <a href="{{ url_for('main.add_post') }}" class="btn btn-primary">Create New Post</a>
+        </div>
+    </div>
+{% endif %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        {% if posts %}
+            {% for post in posts %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ post.title }}</h2>
+                        <p class="text-muted">
+                            Posted by {{ post.author.username }} on {{ post.date.strftime('%B %d, %Y') }}
+                        </p>
+                        {% if post.image_path %}
+                            <img src="{{ url_for('static', filename="images/" + post.image_path) }}"
+                                 class="img-fluid mb-3" alt="Post image">
+                        {% endif %}
+                        <div class="card-text">
+                            {{ markdown.markdown(post.content) | safe }}
+                        </div>
+
+                        <!-- Add buttons for admins -->
+                        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                            <a href="{{ url_for('main.update_post', id=post.id) }}" class="btn btn-primary">Update</a>
+                            <a href="{{ url_for('main.delete_post', id=post.id) }}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+
+                        <!-- Placeholder for comments (to be implemented) -->
+                        <h5>Add a comment:</h5>
+                        <form method="post" action="{{ url_for('main.add_comment', post_id=post.id) }}">
+                            {{ form.hidden_tag() }}
+                            {{ form.content(class="form-control", value="Join the Conversation!") }}
+                            {{ form.submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                    {% if post.comments %}
+                    <!-- Comments Button -->
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#comments{{ post.id }}" aria-expanded="false" aria-controls="comments{{ post.id }}">
+                        Comments
+                    </button>
+
+                    <!-- Comments -->
+                    <div class="collapse" id="comments{{ post.id }}">
+                        {% for comment in post.comments %}
+                            {% if not comment.is_hidden %}
+                                <small>
+                                    On {{ comment.date.strftime('%Y-%m-%d %H:%M:%S') }},
+                                    {{ comment.author.username }} wrote:
+                                </small>
+                                <p>{{ comment.content }}</p>
+                                <hr>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No posts yet. Check back soon!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

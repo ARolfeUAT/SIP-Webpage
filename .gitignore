@@ -1,0 +1,77 @@
+# Python
+pycache/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.egg
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,bak
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+virtualenv/
+ENV/
+
+# PyCharm IDE
+.idea/
+*.iml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.log
+*.bak
+*.swp
+*~
+
+# Project-specific
+instance/
+*.sqlite
+*.db
+*.sql
+*.dump
+
+# PythonAnywhere-specific
+*.pyc
+*.pyo
+*.pyd
+*.wsgi
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Environment and secrets
+.env
+*.env
+*.secret
+*.key
+*.pem
+*.crt
+*.cert
+config.ini
+secrets.json
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# GitHub-specific
+.github/*.local
