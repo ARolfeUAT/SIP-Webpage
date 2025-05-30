@@ -26,9 +26,22 @@ app = Flask(__name__)
 
 # Config Flask App
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-instance_path = os.path.abspath(os.path.join(app.root_path, 'instance'))
-os.makedirs(instance_path, exist_ok=True)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path, "sip.db")}'
+# Configure database for production vs development
+if os.environ.get('FLASK_ENV') == 'production':
+    # Production MySQL configuration for PythonAnywhere
+    mysql_username = 'ARolfeUAT'
+    mysql_password = os.getenv('MYSQL_PASSWORD')
+    mysql_host = 'ARolfeUAT.mysql.pythonanywhere-services.com'
+    mysql_database = 'ARolfeUAT$default'  # Default database name format on PythonAnywhere
+
+    app.config[
+        'SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_username}:{mysql_password}@{mysql_host}/{mysql_database}'
+else:
+    # Development SQLite configuration
+    instance_path = os.path.abspath(os.path.join(app.root_path, 'instance'))
+    os.makedirs(instance_path, exist_ok=True)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path, "sip.db")}'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SMTP2GO_API_KEY'] = os.getenv('SMTP2GO_API_KEY')
 app.config['SMTP2GO_API_URL'] = os.getenv('SMTP2GO_API_URL')
