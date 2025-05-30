@@ -44,6 +44,18 @@ def create_app():
 
         app.config[
             'SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_username}:{mysql_password}@{mysql_host}/{mysql_database}'
+
+        # Add connection pool settings for better reliability
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            'pool_pre_ping': True,
+            'pool_recycle': 300,
+            'connect_args': {
+                'connect_timeout': 20,
+                'read_timeout': 20,
+                'write_timeout': 20,
+            }
+        }
+
     else:
         # Development SQLite configuration
         instance_path = os.path.abspath(os.path.join(app.root_path, 'instance'))

@@ -121,12 +121,9 @@ def register():
     Returns:
         str: Rendered HTML template or redirect on successful registration.
     """
-    from app import bcrypt, db, app
-    from models import User
+    from extensions import bcrypt, db
 
-    current_app.logger.debug(f"SQLAlchemy instance for app: {getattr(app, '_sqlalchemy_instance', 
-                                                                     'No SQLAlchemy instance registered')}")
-    current_app.logger.debug(f"SQLAlchemy instance for db: {db}")
+    from models import User
 
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -358,3 +355,20 @@ def add_comment(post_id):
         db.session.commit()
         flash('Your comment has been added!', 'success')
         return redirect(url_for('main.sip'))
+    else:
+        flash('Comment failed. Please try again.', 'danger')
+        return redirect(url_for('main.sip'))
+
+
+@main.route('/test_db')
+def test_db():
+    """Test database connection."""
+    from extensions import db
+    from models import User
+
+    try:
+        # Try to query the database
+        user_count = User.query.count()
+        return f"Database connection successful! User count: {user_count}"
+    except Exception as e:
+        return f"Database connection failed: {str(e)}"
