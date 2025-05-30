@@ -11,6 +11,7 @@ on GitHub.
 """
 
 import os
+import secrets
 
 from dotenv import load_dotenv
 from flask import Flask
@@ -25,7 +26,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Config Flask App
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or secrets.token_hex(16)
 # Configure database for production vs development
 if os.environ.get('FLASK_ENV') == 'production':
     # Production MySQL configuration for PythonAnywhere
